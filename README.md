@@ -12,3 +12,6 @@ containeruid[:containergid][=hostuid[:hostgid]]
 Container uid and optional gid to map to host. If a gid is not specified, the uid will be used
 
 To use it simply visit the website : https://kloknibor.github.io/proxmox-lxc-id-mapper/
+
+If it was helpfull please consider :
+<script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script><script type='text/javascript'>kofiwidget2.init('Support Me on Ko-fi', '#e06f28', 'V7V1SYHL4');kofiwidget2.draw();</script> 
