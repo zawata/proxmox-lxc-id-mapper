@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LXC IDMap Generator</title>
+    <style>
+        /* Add your styles here */
+    </style>
+</head>
+<body>
+    <h1>LXC IDMap Generator</h1>
+    <label for="idMappings">Enter ID Mappings:</label>
+    <textarea id="idMappings" rows="4" cols="50" placeholder="e.g. 1000=1005 1005=1001"></textarea>
+    <button onclick="generateIdMap()">Generate</button>
+
+    <h2>Generated Output:</h2>
+    <pre id="output"></pre>
+
+    <script>
+        function parserValidate(value, min = 1, max = 65535) {
+            var [container, host] = value.split('=') || [value, value];
+            var [containeruid, containergid] = (container.split(':') || [container, container]);
+            var [hostuid, hostgid] = (host.split(':') || [host, host]);
+            
+            if (containergid == undefined){
+                containergid = containeruid
+            }
+            
+            if (hostgid == undefined){
+                hostgid = hostuid
+            }
+            
+            if (!containeruid.match(/^\d+$/)) {
+                throw new Error(`UID "${containeruid}" is not a number`);
+            } else if (!containergid.match(/^\d*$/)) {
+                throw new Error(`GID "${containergid}" is not a number`);
+            } else if (!(min <= parseInt(containeruid) && parseInt(containeruid) <= max)) {
+                throw new Error(`UID "${containeruid}" is not in range ${min}-${max}`);
+            } else if (!(min <= parseInt(containergid) && parseInt(containergid) <= max)) {
+                throw new Error(`GID "${containergid}" is not in range ${min}-${max}`);
+            }
+
+            if (!hostuid.match(/^\d+$/)) {
+                throw new Error(`UID "${hostuid}" is not a number`);
+            } else if (!hostgid.match(/^\d*$/)) {
+                throw new Error(`GID "${hostgid}" is not a number`);
+            } else if (!(min <= parseInt(hostuid) && parseInt(hostuid) <= max)) {
+                throw new Error(`UID "${hostuid}" is not in range ${min}-${max}`);
+            } else if (!(min <= parseInt(hostgid) && parseInt(hostgid) <= max)) {
+                throw new Error(`GID "${hostgid}" is not in range ${min}-${max}`);
+            } else {
+                return [parseInt(containeruid), parseInt(containergid || defaultContainerGid), parseInt(hostuid), parseInt(hostgid || defaultHostGid)];
+            }
+        }
+
+        function createMap(idType, idList) {
+            const ret = [];
+
+            for (let i = 0; i < idList.length; i++) {
+                const containerid = idList[i][0];
+                const hostid = idList[i][2];
+
+                if (i === 0) {
+                    ret.push(`lxc.idmap: ${idType} 0 100000 ${containerid}`);
+                } else {
+                    const rangeStart = idList[i - 1][0] + 1;
+                    const rangeEnd = idList[i - 1][0] + 100001;
+                    const rangeSize = containerid - 1 - idList[i - 1][0];
+                    ret.push(`lxc.idmap: ${idType} ${rangeStart} ${rangeEnd} ${rangeSize}`);
+                }
+
+                ret.push(`lxc.idmap: ${idType} ${containerid} ${hostid} 1`);
+
+                if (i === idList.length - 1) {
+                    const rangeStart = containerid + 1;
+                    const rangeEnd = containerid + 100001;
+                    const rangeSize = 65535 - containerid;
+                    ret.push(`lxc.idmap: ${idType} ${rangeStart} ${rangeEnd} ${rangeSize}`);
+                }
+            }
+
+            return ret;
+        }
+
+        function generateIdMap() {
+            try {
+                const input = document.getElementById('idMappings').value.trim();
+                const mappings = input.split(' ');
+
+                const idList = mappings.map(mapping => parserValidate(mapping));
+
+                const uidMap = createMap('u', idList);
+                const gidMap = createMap('g', idList);
+
+                let outputText = '\n# Add to /etc/pve/lxc/<container_id>.conf:\n';
+                for (let i = 0; i < uidMap.length; i++) {
+                    outputText += `${uidMap[i]}\n${gidMap[i]}\n`;
+                }
+
+                outputText += '\n# Add to /etc/subuid:\n';
+                for (const uid of idList) {
+                    outputText += `root:${uid[1]}:1\n`;
+                }
+
+                outputText += '\n# Add to /etc/subgid:\n';
+                for (const gid of idList) {
+                    outputText += `root:${gid[1]}:1\n`;
+                }
+
+                document.getElementById('output').innerText = outputText;
+            } catch (error) {
+                document.getElementById('output').innerText = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
