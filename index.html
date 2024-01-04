@@ -5,13 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LXC IDMap Generator</title>
     <style>
-        /* Add your styles here */
+      body {
+        background-color: #121212;
+      }
+      
+      #idMappings {
+        background-color: rgb(47, 43, 58);
+        border-radius: 10px;
+        color : #fff;
+        padding: 10px;
+      }
+      
+      button {
+        border-radius: 50px;
+        font-size: large;
+        background-color: #ff5722;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+        font-family: "Plus_Jakarta_Sans","Roboto",-apple-system,"Segoe UI",sans-serif;
+        font-weight: 700!important;
+      }
+      
+      h1 {
+        color: #ff5722;
+        font-family: "Plus_Jakarta_Sans","Roboto",-apple-system,"Segoe UI",sans-serif;
+      }
+      
+      h2 {
+        color: #fff;
+        font-family: "Plus_Jakarta_Sans","Roboto",-apple-system,"Segoe UI",sans-serif;
+      }
+      
+      label {
+        color: #fff;
+        font-weight: 700;
+        font-family: "Plus_Jakarta_Sans","Roboto",-apple-system,"Segoe UI",sans-serif;
+      }
+      
+      #output {
+        color: #fff;
+      }
+      
+      #text-area {
+        color: #fff;
+      }
+      
+      #description {
+        color: #fff;
+        font-family: "Plus_Jakarta_Sans","Roboto",-apple-system,"Segoe UI",sans-serif;
+      }
+      
+      a {
+        color: #fff;
+      }
     </style>
 </head>
 <body>
     <h1>LXC IDMap Generator</h1>
-    <label for="idMappings">Enter ID Mappings:</label>
+    <div id="description"> This tool allows to easily generate a configuration for mapping uid and guid's for an unpriviliged Proxmox LXC. <br>
+    This is sometimes required to fix permission issues when files/folders are mounted within an LXC. <br>
+    For more info see: <a href="https://pve.proxmox.com/wiki/Unprivileged_LXC_containers"> https://pve.proxmox.com/wiki/Unprivileged_LXC_containers </a>
+    <br><br>
+    This allows for example to bind UID 1005 both inside of the container to the same UID uotside of the container.
+    <br><br>
+      
+      <b> Usage: </b> <br>
+            containeruid[:containergid][=hostuid[:hostgid]]<br>
+      Container uid and optional gid to map to host. If a gid is not specified, the uid will be used <br> <br>
+
+   </div>
+    <label for="idMappings">Enter ID Mappings:</label> 
+    <br>
     <textarea id="idMappings" rows="4" cols="50" placeholder="e.g. 1000=1005 1005=1001"></textarea>
+    <br>
     <button onclick="generateIdMap()">Generate</button>
 
     <h2>Generated Output:</h2>
