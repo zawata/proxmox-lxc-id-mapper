@@ -14,4 +14,4 @@ Container uid and optional gid to map to host. If a gid is not specified, the ui
 To use it simply visit the website : https://kloknibor.github.io/proxmox-lxc-id-mapper/
 
 If it was helpfull please consider :
-<a href='https://ko-fi.com/V7V1SYHL4' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
+<br><a href='https://ko-fi.com/V7V1SYHL4' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
