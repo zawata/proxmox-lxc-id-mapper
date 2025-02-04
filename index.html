@@ -135,8 +135,8 @@
             const ret = [];
 
             for (let i = 0; i < idList.length; i++) {
-                const containerid = idList[i][0];
-                const hostid = idList[i][2];
+                const containerid = idList[i][idType === 'u' ? 0 : 1];
+                const hostid = idList[i][idType === 'u' ? 2 : 3];
 
                 if (i === 0) {
                     ret.push(`lxc.idmap: ${idType} 0 100000 ${containerid}`);
