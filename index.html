@@ -135,15 +135,18 @@
             const ret = [];
 
             for (let i = 0; i < idList.length; i++) {
-                const containerid = idList[i][0];
-                const hostid = idList[i][2];
+                const containerIdIdx = idType === 'u' ? 0 : 1;
+                const hostIdIdx = idType === 'u' ? 0 : 1;
+
+                const containerid = idList[i][containerIdIdx];
+                const hostid = idList[i][hostIdIdx];
 
                 if (i === 0) {
                     ret.push(`lxc.idmap: ${idType} 0 100000 ${containerid}`);
                 } else {
-                    const rangeStart = idList[i - 1][0] + 1;
-                    const rangeEnd = idList[i - 1][0] + 100001;
-                    const rangeSize = containerid - 1 - idList[i - 1][0];
+                    const rangeStart = idList[i - 1][containerIdIdx] + 1;
+                    const rangeEnd = idList[i - 1][containerIdIdx] + 100001;
+                    const rangeSize = containerid - 1 - idList[i - 1][containerIdIdx];
                     ret.push(`lxc.idmap: ${idType} ${rangeStart} ${rangeEnd} ${rangeSize}`);
                 }
 
